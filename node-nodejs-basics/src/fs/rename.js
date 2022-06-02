@@ -9,8 +9,14 @@ const __dirname = dirname(__filename);
 
 export const rename = async () => {
     const oldPath = path.resolve(__dirname, './files/wrongFilename.txt');
-    const newPath = path.resolve(__dirname, './files/properFilename.txt');
+    const newPath = path.resolve(__dirname, './files/properFilename.md');
 
-    const promise = await fs.rename(oldPath, newPath);
-    console.log(promise);
+    const promise = fs.rename(oldPath, newPath);
+    promise.catch((err) => {
+        if (err.code === 'ENOENT') {
+            throw new Error('FS operation failed');
+        }
+        console.log(err);
+    })
 };
+rename();
