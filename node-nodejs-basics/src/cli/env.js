@@ -5,7 +5,7 @@ export const parseEnv = () => {
    for (const key in environment) {
       if (key.match(regex)) {
          const element = environment[key];
-         result += `${key}=${element};`;
+         result += `${key}=${element};\n`;
       }
    }
    let arr = result.split('');
