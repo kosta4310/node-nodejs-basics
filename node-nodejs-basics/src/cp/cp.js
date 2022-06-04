@@ -18,4 +18,3 @@ export const spawnChildProcess = async (args) => {
     // process.send({ msg: 'welcome' });
     // console.log(process.channel);
 };
-spawnChildProcess(['git','log']);
