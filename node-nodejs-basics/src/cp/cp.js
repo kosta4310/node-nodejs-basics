@@ -8,13 +8,19 @@ import { stdout } from 'process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const pathToFile = path.resolve(__dirname, './files/script.js');
 
 
 export const spawnChildProcess = async (args) => {
-    const process = fork(path.resolve(__dirname, './files/script.js'), args);
-    // process.stdout.on('data', data => console.log(`stdout data: ${data}`));
+    // const child_process = fork(path.resolve(__dirname, './files/script.js'), args);
+    
+    // child_process.on('exit', () => console.log('child: exit'));
+    // process.on('exit', () => console.log('master: exit'));
 
-        
-    // process.send({ msg: 'welcome' });
-    // console.log(process.channel);
+    const child_process = spawn('node ' + pathToFile, args, {shell: true});
+    
+    child_process.stdout.on('data', data => { process.stdout.write(data)});
+    process.stdin.on('data', (data) => child_process.stdin.write(data));
+    child_process.on('close', () => process.exit());
+
 };
