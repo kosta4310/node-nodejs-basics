@@ -10,7 +10,7 @@ const __dirname = dirname(__filename);
 
 export const copy = async () => {
     try {
-        const dirents = await fs.readdir(path.join(__dirname, 'file'), { withFileTypes: true });
+        const dirents = await fs.readdir(path.join(__dirname, 'files'), { withFileTypes: true });
        
         fs.mkdir(path.resolve(__dirname, './files_copy'))
             .catch((err) => {
