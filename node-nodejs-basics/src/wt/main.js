@@ -7,42 +7,40 @@ import { Worker } from 'worker_threads';
 import { stdout } from 'process';
 import  os  from 'os';
 import { rejects } from 'assert';
+import { stat } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const pathToFile = path.resolve(__dirname, './worker.js');
 const numberOfCore = os.cpus().length;
-let array = Promise.allSettled([]);
+let promises = [];
 
 export const performCalculations = async () => {
     
     for (let i = 0; i < numberOfCore; i++) {
         let n = 10 + i;
-        let promises = await new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             const worker = new Worker(pathToFile, {
             
             workerData: n
         });
-        const workerId = worker.threadId;
-        console.log(`worker ${workerId} is started`);
-        // worker.on('message', (data) => { console.log(`data from worker: ${data}`) });
-        worker.on('message', (data) => {
-            // array.push({ [workerId]: data });
-            console.log(`workerId ${workerId}: ${data}`);
+           // console.log(`worker ${worker.threadId} is started`);
+           worker.on('message', (data) => {
             resolve(data);
         });
-        // worker.on('exit', (code) => {
-        //     console.log(`worker ${workerId} exit ${code}`);
-        //     if (array.length === numberOfCore) {
-        //         console.log(array);
-        //     }
-        // });
             worker.on('error', (err) => {
                 reject(err);
             });
         });
-        (await array).push(promises);
+        promises.push(promise);
     }
-    array.then(data => console.log(data));
+    await Promise.allSettled(promises)
+        .then(data => {
+            let tempArray = [];
+        data.forEach(obj => {
+            tempArray.push(obj.value);
+        });
+            console.log(tempArray);
+    });
     
 };
